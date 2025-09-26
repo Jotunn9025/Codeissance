@@ -1,13 +1,17 @@
 import Link from "next/link"
 import Image from "next/image"
-import { PageShell } from "@/components/layout/page-shell"
 
 export default function HomePage() {
   return (
-    <PageShell
-      title="Dynamic Market Sentiment Forecaster"
-      subtitle="Agentic AI that autonomously collects signals, forecasts sentiment trends, and turns them into proactive strategy."
-    >
+    <main className="container mx-auto px-4 py-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold tracking-tight mb-4">
+            Dynamic Market Sentiment Forecaster
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Agentic AI that autonomously collects signals, forecasts sentiment trends, and turns them into proactive strategy.
+          </p>
+        </div>
       <section className="grid gap-6 md:grid-cols-2">
         <div className="rounded-lg border bg-card p-6">
           <h2 className="text-xl font-semibold">Why this matters</h2>
@@ -49,6 +53,6 @@ export default function HomePage() {
           </div>
         ))}
       </section>
-    </PageShell>
+    </main>
   )
 }

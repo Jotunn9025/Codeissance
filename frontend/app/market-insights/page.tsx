@@ -1,5 +1,4 @@
 "use client";
-import { PageShell } from "@/components/layout/page-shell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart3, TrendingDown, Lightbulb, ArrowRight, Target, TrendingUp, RefreshCw } from "lucide-react";
@@ -137,10 +136,11 @@ export default function MarketInsightsPage() {
   ];
 
   return (
-    <PageShell 
-      title="Market & Business Insights" 
-      subtitle="AI-powered correlation analysis, forecasting, and strategic recommendations based on sentiment data."
-    >
+    <main className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Market & Business Insights</h1>
+        <p className="text-muted-foreground">AI-powered correlation analysis, forecasting, and strategic recommendations based on sentiment data.</p>
+      </div>
       <div className="space-y-8">
         {/* Overview Cards */}
         <div className="grid gap-6 md:grid-cols-3">
@@ -273,6 +273,6 @@ export default function MarketInsightsPage() {
           </CardContent>
         </Card>
       </div>
-    </PageShell>
+    </main>
   );
 }

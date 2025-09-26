@@ -1,6 +1,5 @@
 "use client"
 
-import { PageShell } from "@/components/layout/page-shell"
 import { useState } from "react"
 
 export default function SettingsPage() {
@@ -8,7 +7,11 @@ export default function SettingsPage() {
   const [emailReports, setEmailReports] = useState(false)
 
   return (
-    <PageShell title="Settings" subtitle="Configure alerts and reporting.">
+    <main className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+        <p className="text-muted-foreground">Configure alerts and reporting.</p>
+      </div>
       <div className="grid gap-6 max-w-xl">
         <div className="rounded-lg border border bg-card p-4">
           <h3 className="font-medium">Notifications</h3>
@@ -47,6 +50,6 @@ export default function SettingsPage() {
           </p>
         </div>
       </div>
-    </PageShell>
+    </main>
   )
 }

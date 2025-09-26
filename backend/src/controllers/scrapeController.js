@@ -1,5 +1,41 @@
 import axios from "axios";
 
+// Cache for storing scraped data and Groq analysis
+const cache = {
+  data: null,
+  timestamp: null,
+  ttl: 5 * 60 * 1000, // 5 minutes cache TTL
+  groqAnalysis: null,
+  groqTimestamp: null,
+  groqTtl: 10 * 60 * 1000 // 10 minutes cache for Groq analysis
+};
+
+// Check if cache is valid
+function isCacheValid(timestamp, ttl) {
+  return timestamp && (Date.now() - timestamp) < ttl;
+}
+
+// Clear cache function
+function clearCache() {
+  cache.data = null;
+  cache.timestamp = null;
+  cache.groqAnalysis = null;
+  cache.groqTimestamp = null;
+  console.log('Cache cleared');
+}
+
+// Get cache status
+function getCacheStatus() {
+  return {
+    hasData: !!cache.data,
+    dataAge: cache.timestamp ? Date.now() - cache.timestamp : null,
+    dataTtl: cache.ttl,
+    hasGroqAnalysis: !!cache.groqAnalysis,
+    groqAge: cache.groqTimestamp ? Date.now() - cache.groqTimestamp : null,
+    groqTtl: cache.groqTtl
+  };
+}
+
 // Reddit: popular trending content from various subreddits (global, not localized)
 async function scrapeReddit() {
   const articles = [];
@@ -59,7 +95,7 @@ async function scrapeReddit() {
         if (seenTitles.has(title) || seenUrls.has(url)) continue;
         
         // Increase limit to 100 articles
-        if (articles.length >= 100) break;
+        if (articles.length >= 50) break;
         
         seenTitles.add(title);
         seenUrls.add(url);
@@ -257,7 +293,7 @@ async function scrapeNewsApi() {
           if (seenTitles.has(title) || seenUrls.has(url)) continue;
           
           // Increase limit to 40 articles
-          if (articles.length >= 30) break;
+          if (articles.length >= 20) break;
           
           seenTitles.add(title);
           seenUrls.add(url);
@@ -315,7 +351,7 @@ async function scrapeNewsApi() {
           });
         }
         
-        if (articles.length >= 30) break;
+        if (articles.length >= 20) break;
         
       } catch (_) {
         // Fallback failed, continue with what we have
@@ -362,6 +398,14 @@ async function scrapePerplexity() {
 async function analyzeContentWithGroq(articles) {
   const groqApiKey = process.env.GROQ_API_KEY;
   if (!groqApiKey || !articles.length) return { topStories: [], allArticles: [] };
+
+  // Check if we have valid cached Groq analysis
+  if (isCacheValid(cache.groqTimestamp, cache.groqTtl) && cache.groqAnalysis) {
+    console.log('Returning cached Groq analysis');
+    return cache.groqAnalysis;
+  }
+
+  console.log('Cache miss - running fresh Groq analysis');
 
   try {
     // Prepare titles for analysis
@@ -420,10 +464,17 @@ content: "You are a highly intelligent news and financial market analysis AI. Yo
     // Now analyze all articles with confidence scores
     const allArticlesAnalysis = await analyzeAllArticlesWithGroq(articles, groqApiKey);
     
-    return {
+    const result = {
       topStories: Array.isArray(topStories) ? topStories : [],
       allArticles: allArticlesAnalysis
     };
+
+    // Cache the Groq analysis results
+    cache.groqAnalysis = result;
+    cache.groqTimestamp = Date.now();
+    console.log('Cached Groq analysis results');
+    
+    return result;
   } catch (error) {
     console.error('Groq API error:', error.message);
     return { topStories: [], allArticles: [] };
@@ -542,6 +593,13 @@ function countTopicPopularityFromGroq(groqAnalysis) {
 }
 
 export const scrapeSources = async (req, res) => {
+  // Check if we have valid cached data
+  if (isCacheValid(cache.timestamp, cache.ttl) && cache.data) {
+    console.log('Returning cached scraping data');
+    return res.json(cache.data);
+  }
+
+  console.log('Cache miss - fetching fresh data');
  
   const Responses = {
     "type": "trending_content",
@@ -679,7 +737,7 @@ export const scrapeSources = async (req, res) => {
     };
   });
   
-    res.json({ 
+    const responseData = { 
       type: "trending_content",
       timestamp: new Date().toISOString(),
       x, 
@@ -695,7 +753,14 @@ export const scrapeSources = async (req, res) => {
         topTopics: topicPopularity.slice(0, 10),
         confidenceThreshold: 0.7
       }
-    });
+    };
+
+    // Cache the complete response
+    cache.data = responseData;
+    cache.timestamp = Date.now();
+    console.log('Cached complete scraping response');
+
+    res.json(responseData);
   } catch (error) {
     console.error('Error in scrapeSources:', error);
     res.status(500).json({ 
@@ -718,6 +783,33 @@ export const scrapeSources = async (req, res) => {
       }
     });
   }
+};
+
+// Cache management endpoints
+export const clearCacheEndpoint = async (req, res) => {
+  clearCache();
+  res.json({ 
+    success: true, 
+    message: 'Cache cleared successfully',
+    timestamp: new Date().toISOString()
+  });
+};
+
+export const getCacheStatusEndpoint = async (req, res) => {
+  const status = getCacheStatus();
+  res.json({
+    ...status,
+    timestamp: new Date().toISOString()
+  });
+};
+
+// Force refresh endpoint (bypasses cache)
+export const forceRefreshEndpoint = async (req, res) => {
+  console.log('Force refresh requested - clearing cache');
+  clearCache();
+  
+  // Call the main scraping function
+  return scrapeSources(req, res);
 };
 
 

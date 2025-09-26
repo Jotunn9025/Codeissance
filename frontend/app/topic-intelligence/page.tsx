@@ -1,5 +1,4 @@
 "use client";
-import { PageShell } from "@/components/layout/page-shell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GitBranch, TrendingUp, Network, ArrowRight, RefreshCw } from "lucide-react";
@@ -77,10 +76,11 @@ export default function TopicIntelligencePage() {
   ];
 
   return (
-    <PageShell 
-      title="Topic & Trend Intelligence" 
-      subtitle="AI-powered analysis of trending topics, clustering, and relationship mapping across all data sources."
-    >
+    <main className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Topic & Trend Intelligence</h1>
+        <p className="text-muted-foreground">AI-powered analysis of trending topics, clustering, and relationship mapping across all data sources.</p>
+      </div>
       <div className="space-y-8">
         {/* Overview Cards */}
         <div className="grid gap-6 md:grid-cols-3">
@@ -203,6 +203,6 @@ export default function TopicIntelligencePage() {
           </CardContent>
         </Card>
       </div>
-    </PageShell>
+    </main>
   );
 }

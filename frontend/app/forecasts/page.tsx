@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react"
 import useSWR from "swr"
 import { fetcher } from "@/lib/swr"
-import { PageShell } from "@/components/layout/page-shell"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
@@ -29,7 +28,11 @@ export default function ForecastsPage() {
   }, [data])
 
   return (
-    <PageShell title="Market Forecasting" subtitle="Retrain and fetch ML forecasts with news sentiment.">
+    <main className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Market Forecasting</h1>
+        <p className="text-muted-foreground">Retrain and fetch ML forecasts with news sentiment.</p>
+      </div>
       <div className="flex gap-2 mb-4">
         <Input value={symbol} onChange={(e) => setSymbol(e.target.value.toUpperCase())} placeholder="Ticker (e.g., AAPL)" className="w-40" />
         <Button onClick={() => mutate()} disabled={isLoading}>Retrain & Forecast</Button>
@@ -91,6 +94,6 @@ export default function ForecastsPage() {
           </Card>
         </div>
       )}
-    </PageShell>
+    </main>
   )
 }

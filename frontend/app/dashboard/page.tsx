@@ -1,5 +1,4 @@
 "use client";
-import { PageShell } from "@/components/layout/page-shell"
 import { TrendingContentPanel } from "@/components/panels/trending-content-panel"
 import { RedditPanel } from "@/components/panels/reddit-panel"
 import { NewsPanel } from "@/components/panels/news-panel"
@@ -9,6 +8,7 @@ import { SummaryPanel } from "@/components/panels/summary-panel"
 import { TopStoryWidget } from "@/components/panels/top-story-widget"
 import { WordCloudPanel } from "@/components/panels/word-cloud-panel"
 import { TopicDrillDown } from "@/components/panels/topic-drill-down"
+import { CacheStatusWidget } from "@/components/ui/cache-status"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { RefreshCw, Search, Filter } from "lucide-react"
@@ -20,6 +20,8 @@ interface ScrapeData {
   reddit: any[];
   newsApi: any[];
   perplexity: any[];
+  topStories: any[];
+  allArticlesAnalysis: any[];
   fuzzyAnalysis: {
     totalArticles: number;
     matchedArticles: number;
@@ -36,6 +38,7 @@ export default function DashboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterSource, setFilterSource] = useState("all");
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [cacheStatus, setCacheStatus] = useState<any>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -56,8 +59,38 @@ export default function DashboardPage() {
     }
   };
 
+  const fetchCacheStatus = async () => {
+    try {
+      const response = await fetch('/api/backend/sources/cache/status');
+      if (response.ok) {
+        const status = await response.json();
+        setCacheStatus(status);
+      }
+    } catch (error) {
+      console.error('Error fetching cache status:', error);
+    }
+  };
+
+  const forceRefresh = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/backend/sources/cache/refresh', { method: 'POST' });
+      if (response.ok) {
+        const result = await response.json();
+        setData(result);
+        setLastUpdated(new Date());
+        await fetchCacheStatus();
+      }
+    } catch (error) {
+      console.error('Error force refreshing:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchCacheStatus();
     // Auto-refresh every 5 minutes
     const interval = setInterval(fetchData, 5 * 60 * 1000);
     return () => clearInterval(interval);
@@ -66,18 +99,26 @@ export default function DashboardPage() {
   // If a topic is selected, show drill-down view
   if (selectedTopic && data) {
     return (
-      <PageShell title="Topic Analysis" subtitle={`Deep dive into "${selectedTopic}" across all sources.`}>
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">Topic Analysis</h1>
+          <p className="text-muted-foreground">Deep dive into "{selectedTopic}" across all sources.</p>
+        </div>
         <TopicDrillDown 
           topic={selectedTopic} 
           data={data} 
           onBack={() => setSelectedTopic(null)} 
         />
-      </PageShell>
+      </main>
     );
   }
 
   return (
-    <PageShell title="Trending Content Dashboard" subtitle="Real-time social media, news, and search trend analysis with AI-powered insights.">
+    <main className="container mx-auto px-4 py-8">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Trending Content Dashboard</h1>
+        <p className="text-muted-foreground">Real-time social media, news, and search trend analysis with AI-powered insights.</p>
+      </div>
       {/* Header Controls */}
       <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
@@ -88,6 +129,16 @@ export default function DashboardPage() {
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             {loading ? 'Scraping...' : 'Scrape Now'}
+          </Button>
+          
+          <Button 
+            onClick={forceRefresh} 
+            disabled={loading}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            Force Refresh
           </Button>
           
           <div className="flex items-center gap-2">
@@ -117,24 +168,38 @@ export default function DashboardPage() {
           </div>
         </div>
         
-        {lastUpdated && (
-          <div className="text-sm text-muted-foreground">
-            Last updated: {lastUpdated.toLocaleTimeString()}
-          </div>
-        )}
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          {lastUpdated && (
+            <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
+          )}
+          {cacheStatus && (
+            <div className="flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${cacheStatus.hasData ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <span>
+                {cacheStatus.hasData ? 'Cached' : 'No Cache'} 
+                {cacheStatus.dataAge && ` (${Math.round(cacheStatus.dataAge / 1000)}s ago)`}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Summary Panel */}
-      {data && (
-        <div className="mb-8">
-          <SummaryPanel data={data.fuzzyAnalysis} />
+      {/* Summary Panel and Cache Status */}
+      <div className="mb-8 grid gap-6 md:grid-cols-3">
+        {data && (
+          <div className="md:col-span-2">
+            <SummaryPanel data={data.fuzzyAnalysis} />
+          </div>
+        )}
+        <div className="md:col-span-1">
+          <CacheStatusWidget />
         </div>
-      )}
+      </div>
 
       {/* Top Story Widget */}
-      {data && (
+      {data && data.topStories && (
         <div className="mb-8">
-          <TopStoryWidget data={data} />
+          <TopStoryWidget data={data.topStories} />
         </div>
       )}
 
@@ -220,6 +285,6 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-    </PageShell>
+    </main>
   )
 }
