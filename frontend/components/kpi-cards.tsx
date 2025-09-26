@@ -59,7 +59,7 @@ export function KPICards() {
         const TrendIcon = isPositive ? TrendingUp : TrendingDown
 
         return (
-          <div key={card.title} className="rounded-lg border border-border bg-card p-4">
+          <div key={card.title} className="rounded-lg border border bg-card p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Icon className="size-4 text-muted-foreground" />

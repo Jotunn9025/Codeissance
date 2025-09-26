@@ -10,7 +10,7 @@ export default function SettingsPage() {
   return (
     <PageShell title="Settings" subtitle="Configure alerts and reporting.">
       <div className="grid gap-6 max-w-xl">
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-lg border border bg-card p-4">
           <h3 className="font-medium">Notifications</h3>
           <div className="mt-4 flex items-center justify-between">
             <label htmlFor="alerts" className="text-sm">
@@ -40,10 +40,10 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-4">
+        <div className="rounded-lg border border bg-card p-4">
           <h3 className="font-medium">Data</h3>
           <p className="text-sm text-muted-foreground mt-2">
-            In this demo, data is mocked via route handlers. Connect real integrations to enable live ingestion.
+            Real-time data ingestion from Reddit, NewsAPI, Perplexity, and X/Twitter. AI-powered analysis with Groq Llama 3.3 70B.
           </p>
         </div>
       </div>

@@ -17,7 +17,7 @@ export function SentimentTrendChart() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-border bg-card p-6">
+      <div className="rounded-lg border border bg-card p-6">
         <div className="text-destructive text-sm">Failed to load sentiment data.</div>
       </div>
     )
@@ -25,7 +25,7 @@ export function SentimentTrendChart() {
 
   if (isLoading || !data) {
     return (
-      <div className="rounded-lg border border-border bg-card p-6">
+      <div className="rounded-lg border border bg-card p-6">
         <div className="animate-pulse">
           <div className="h-4 bg-muted rounded w-1/3 mb-4"></div>
           <div className="h-64 bg-muted rounded"></div>
@@ -35,8 +35,8 @@ export function SentimentTrendChart() {
   }
 
   return (
-    <div className="rounded-lg border border-border bg-card">
-      <div className="p-6 border-b border-border">
+    <div className="rounded-lg border border bg-card">
+      <div className="p-6 border-b border">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold">Market Sentiment Trend</h3>

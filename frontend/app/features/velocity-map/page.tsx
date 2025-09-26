@@ -37,7 +37,7 @@ export default function VelocityMapPage() {
             <CardContent>
               <div className="space-y-2">
                 {data.nodes.map((n) => (
-                  <div key={n.id} className="rounded border border-border p-2 text-sm">
+                  <div key={n.id} className="rounded border border p-2 text-sm">
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{n.platform}</span>
                       <span className={`text-xs px-2 py-0.5 rounded ${n.score >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>{n.score}</span>
@@ -57,7 +57,7 @@ export default function VelocityMapPage() {
             <CardContent>
               <div className="space-y-2">
                 {data.edges.map((e, i) => (
-                  <div key={`${e.from}-${e.to}-${i}`} className="rounded border border-border p-2 text-sm">
+                  <div key={`${e.from}-${e.to}-${i}`} className="rounded border border p-2 text-sm">
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{e.kind}</span>
                       <span className="text-xs px-2 py-0.5 rounded bg-secondary text-secondary-foreground">w={e.weight}</span>

@@ -20,14 +20,14 @@ export function ForecastCard() {
 
   if (error)
     return (
-      <div className="rounded-lg border border-border bg-card p-6">
+      <div className="rounded-lg border border bg-card p-6">
         <div className="text-destructive text-sm">Failed to load forecast.</div>
       </div>
     )
 
   if (isLoading || !data)
     return (
-      <div className="rounded-lg border border-border bg-card p-6">
+      <div className="rounded-lg border border bg-card p-6">
         <div className="animate-pulse space-y-4">
           <div className="h-4 bg-muted rounded w-1/2"></div>
           <div className="h-8 bg-muted rounded w-3/4"></div>
@@ -61,8 +61,8 @@ export function ForecastCard() {
   const Icon = getDirectionIcon()
 
   return (
-    <div className="rounded-lg border border-border bg-card">
-      <div className="p-6 border-b border-border">
+    <div className="rounded-lg border border bg-card">
+      <div className="p-6 border-b border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Target className="size-4 text-muted-foreground" />

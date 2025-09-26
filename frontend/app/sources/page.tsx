@@ -17,7 +17,7 @@ export default function SourcesPage() {
       {data && (
         <div className="grid gap-4 md:grid-cols-2">
           {data.map((s) => (
-            <div key={s.id} className="rounded-lg border border-border bg-card p-4">
+            <div key={s.id} className="rounded-lg border border bg-card p-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">{s.name}</h3>
                 <span

@@ -26,9 +26,24 @@ async function fetchNews(symbol) {
   } catch (_) { return []; }
 }
 
-// Placeholder for X/Twitter; could be wired to an API later.
+// X/Twitter via Nitter RSS (free, no key). Lightweight title extraction.
 async function fetchX(symbol) {
-  return [];
+  const query = encodeURIComponent(symbol);
+  const url = `https://nitter.net/search/rss?f=tweets&q=${query}`;
+  try {
+    const res = await axios.get(url, {
+      timeout: 12000,
+      headers: { "User-Agent": "velocity-map/1.0" },
+    });
+    const xml = String(res.data || "");
+    const titles = Array.from(xml.matchAll(/<title>([\s\S]*?)<\/title>/g))
+      .map(m => m[1])
+      .filter(Boolean)
+      .slice(1, 20); // skip feed title, take up to 20 tweets
+    return titles.map((t, i) => ({ id: `xrss-${i}`, text: t }));
+  } catch (_e) {
+    return [];
+  }
 }
 
 export const getVelocity = async (req, res) => {
@@ -88,9 +103,25 @@ export const getVelocity = async (req, res) => {
       ].slice(0, 15);
       const prompt = `You are an analyst. Given post titles across platforms, write a concise narrative (<=120 words) explaining how sentiment is migrating across platforms for ${symbol}. Focus on direction, where it started, where it is amplifying, and likely next hop. Titles in order:\n` + titlesChrono.map((t, i) => `${i+1}. ${t}`).join("\n");
       const gemRes = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${googleApiKey}`,
-        { contents: [{ parts: [{ text: prompt }] }] },
-        { timeout: 12000 }
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
+        {
+          contents: [
+            {
+              parts: [
+                {
+                  text: prompt,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": googleApiKey,
+          },
+          timeout: 12000
+        }
       );
       aiNarrative = gemRes?.data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
     } catch (_e) {

@@ -1,0 +1,385 @@
+{
+  "info": {
+    "name": "Codeissance Trending Content API",
+    "description": "Postman collection for testing the trending content web scraping endpoints with up to 25 articles per source (except Perplexity with 5)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "3.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Trending Content Scraping",
+      "item": [
+        {
+          "name": "Scrape Trending Content",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/scrape",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "scrape"]
+            },
+            "description": "Scrapes up to 50 trending articles from each source (Reddit, X/Twitter, NewsAPI) and 5 from Perplexity. Uses Gemini API for fuzzy matching to identify similar topics despite different title strings, then counts occurrences for popularity voting. Reddit focuses on popular posts from trending subreddits globally. X/Twitter gets actual trending content from Twitter's trending section. No symbol parameter needed - focuses on general trending content."
+          },
+          "response": []
+        },
+        {
+          "name": "Scrape Trending Content - Test Performance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/scrape",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "scrape"]
+            },
+            "description": "Performance test for trending content scraping - measures response time and data quality"
+          },
+          "response": []
+        }
+      ],
+      "description": "Trending content scraping endpoints that fetch articles from multiple sources with variety and deduplication. Uses Gemini API for fuzzy matching to group similar topics despite different title strings, enabling accurate popularity counting. Reddit uses popularity-based sorting from trending subreddits globally (up to 50 articles). X/Twitter gets actual trending content from Twitter's trending section (up to 20 articles)."
+    },
+    {
+      "name": "Trending Content Sentiment Analysis",
+      "item": [
+        {
+          "name": "Get Trending Content Sentiment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/weighted-sentiment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "weighted-sentiment"]
+            },
+            "description": "Gets weighted sentiment analysis using FinancialBERT on scraped trending content from all sources"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trending Content Sentiment - Fast Mode",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/weighted-sentiment?mode=fast",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "weighted-sentiment"],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "fast",
+                  "description": "Use heuristic scoring instead of FinancialBERT for faster results"
+                }
+              ]
+            },
+            "description": "Gets weighted sentiment analysis using fast heuristic mode for trending content"
+          },
+          "response": []
+        }
+      ],
+      "description": "Trending content sentiment analysis endpoints that process scraped articles through FinancialBERT"
+    },
+    {
+      "name": "Topic Analysis Testing",
+      "item": [
+        {
+          "name": "Test Topic Analysis - Full Analysis",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/scrape",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "scrape"]
+            },
+            "description": "Test fuzzy matching with Gemini API - groups similar topics despite different title strings and counts occurrences for popularity voting"
+          },
+          "response": []
+        },
+        {
+          "name": "Test Topic Analysis - Performance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/scrape",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "scrape"]
+            },
+            "description": "Performance test for fuzzy matching - measures Gemini API response time and matching accuracy"
+          },
+          "response": []
+        }
+      ],
+      "description": "Fuzzy matching testing endpoints that validate Gemini API integration and topic popularity counting"
+    },
+    {
+      "name": "Test Scenarios",
+      "item": [
+        {
+          "name": "Test Trending Content Variety",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/scrape",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "scrape"]
+            },
+            "description": "Test variety of trending content across different sources"
+          },
+          "response": []
+        },
+        {
+          "name": "Test Deduplication - Multiple Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/scrape",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "scrape"]
+            },
+            "description": "Test deduplication by running multiple requests to ensure unique content"
+          },
+          "response": []
+        },
+        {
+          "name": "Test Trending Content Sentiment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/weighted-sentiment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "weighted-sentiment"]
+            },
+            "description": "Test sentiment analysis on trending content data"
+          },
+          "response": []
+        },
+        {
+          "name": "Test Performance - Full Pipeline",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/weighted-sentiment?mode=fast",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "weighted-sentiment"],
+              "query": [
+                {
+                  "key": "mode",
+                  "value": "fast"
+                }
+              ]
+            },
+            "description": "Test performance with fast mode sentiment analysis on trending content"
+          },
+          "response": []
+        }
+      ],
+      "description": "Test scenarios to validate the trending content scraping functionality"
+    },
+    {
+      "name": "Environment Setup",
+      "item": [
+        {
+          "name": "Check Server Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/sources/scrape",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "sources", "scrape"]
+            },
+            "description": "Basic connectivity test to check if the server is running and trending content scraping is working"
+          },
+          "response": []
+        }
+      ],
+      "description": "Environment setup and connectivity tests"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set timestamp for request tracking",
+          "pm.globals.set('timestamp', new Date().toISOString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Basic response validation",
+          "pm.test('Response status is 200', function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "",
+          "pm.test('Response has JSON body', function () {",
+          "    pm.response.to.be.json;",
+          "});",
+          "",
+          "// For scraping endpoints, validate structure",
+          "if (pm.request.url.path.includes('scrape')) {",
+          "    pm.test('Response contains expected sources', function () {",
+          "        const jsonData = pm.response.json();",
+          "        pm.expect(jsonData).to.have.property('type');",
+          "        pm.expect(jsonData).to.have.property('timestamp');",
+          "        pm.expect(jsonData).to.have.property('x');",
+          "        pm.expect(jsonData).to.have.property('reddit');",
+          "        pm.expect(jsonData).to.have.property('newsApi');",
+          "        pm.expect(jsonData).to.have.property('perplexity');",
+          "    });",
+          "    ",
+          "    pm.test('Response type is trending_content', function () {",
+          "        const jsonData = pm.response.json();",
+          "        pm.expect(jsonData.type).to.equal('trending_content');",
+          "    });",
+          "    ",
+          "    pm.test('Response contains fuzzy analysis data', function () {",
+          "        const jsonData = pm.response.json();",
+          "        pm.expect(jsonData).to.have.property('fuzzyAnalysis');",
+          "        pm.expect(jsonData.fuzzyAnalysis).to.have.property('totalArticles');",
+          "        pm.expect(jsonData.fuzzyAnalysis).to.have.property('matchedArticles');",
+          "        pm.expect(jsonData.fuzzyAnalysis).to.have.property('topicPopularity');",
+          "        pm.expect(jsonData.fuzzyAnalysis).to.have.property('topTopics');",
+          "        pm.expect(jsonData.fuzzyAnalysis).to.have.property('confidenceThreshold');",
+          "    });",
+          "    ",
+          "    pm.test('Fuzzy matching has valid structure', function () {",
+          "        const jsonData = pm.response.json();",
+          "        if (jsonData.fuzzyAnalysis && jsonData.fuzzyAnalysis.topicPopularity.length > 0) {",
+          "            const topic = jsonData.fuzzyAnalysis.topicPopularity[0];",
+          "            pm.expect(topic).to.have.property('topic');",
+          "            pm.expect(topic).to.have.property('count');",
+          "            pm.expect(topic).to.have.property('avgConfidence');",
+          "            pm.expect(topic).to.have.property('sampleTitles');",
+          "            pm.expect(topic).to.have.property('allTitles');",
+          "        }",
+          "    });",
+          "    ",
+          "    pm.test('Articles have expected structure', function () {",
+          "        const jsonData = pm.response.json();",
+          "        const sources = ['x', 'reddit', 'newsApi', 'perplexity'];",
+          "        ",
+          "        sources.forEach(source => {",
+          "            if (jsonData[source] && jsonData[source].length > 0) {",
+          "                const article = jsonData[source][0];",
+          "                pm.expect(article).to.have.property('id');",
+          "                pm.expect(article).to.have.property('title');",
+          "                pm.expect(article).to.have.property('url');",
+          "            }",
+          "        });",
+          "    });",
+          "    ",
+          "    pm.test('Article count limits are respected', function () {",
+          "        const jsonData = pm.response.json();",
+          "        ",
+          "        // Check that sources have reasonable article counts",
+          "        if (jsonData.x) pm.expect(jsonData.x.length).to.be.at.most(25);",
+          "        if (jsonData.reddit) pm.expect(jsonData.reddit.length).to.be.at.most(25);",
+          "        if (jsonData.newsApi) pm.expect(jsonData.newsApi.length).to.be.at.most(25);",
+          "        if (jsonData.perplexity) pm.expect(jsonData.perplexity.length).to.be.at.most(5);",
+          "    });",
+          "}",
+          "",
+          "// For sentiment endpoints, validate structure",
+          "if (pm.request.url.path.includes('weighted-sentiment')) {",
+          "    pm.test('Response contains sentiment data', function () {",
+          "        const jsonData = pm.response.json();",
+          "        pm.expect(jsonData).to.have.property('ok');",
+          "        pm.expect(jsonData).to.have.property('type');",
+          "        pm.expect(jsonData).to.have.property('score');",
+          "        pm.expect(jsonData).to.have.property('weights');",
+          "        pm.expect(jsonData).to.have.property('counts');",
+          "        pm.expect(jsonData).to.have.property('averages');",
+          "    });",
+          "    ",
+          "    pm.test('Response type is trending_content', function () {",
+          "        const jsonData = pm.response.json();",
+          "        if (jsonData.ok) {",
+          "            pm.expect(jsonData.type).to.equal('trending_content');",
+          "        }",
+          "    });",
+          "    ",
+          "    pm.test('Sentiment score is within valid range', function () {",
+          "        const jsonData = pm.response.json();",
+          "        if (jsonData.ok) {",
+          "            pm.expect(jsonData.score).to.be.a('number');",
+          "            pm.expect(jsonData.score).to.be.at.least(-1);",
+          "            pm.expect(jsonData.score).to.be.at.most(1);",
+          "        }",
+          "    });",
+          "}"
+        ]
+      }
+    }
+  ]
+}

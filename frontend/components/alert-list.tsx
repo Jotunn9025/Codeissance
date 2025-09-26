@@ -20,14 +20,14 @@ export function AlertList() {
 
   if (error)
     return (
-      <div className="rounded-lg border border-border bg-card p-6">
+      <div className="rounded-lg border border bg-card p-6">
         <div className="text-destructive text-sm">Failed to load alerts.</div>
       </div>
     )
 
   if (isLoading || !data)
     return (
-      <div className="rounded-lg border border-border bg-card p-6">
+      <div className="rounded-lg border border bg-card p-6">
         <div className="animate-pulse space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className="flex gap-4">
@@ -65,8 +65,8 @@ export function AlertList() {
   }
 
   return (
-    <div className="rounded-lg border border-border bg-card">
-      <div className="p-6 border-b border-border">
+    <div className="rounded-lg border border bg-card">
+      <div className="p-6 border-b border">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-semibold">Proactive Alerts</h3>
