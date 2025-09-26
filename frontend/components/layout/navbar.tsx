@@ -67,6 +67,14 @@ export default function Navbar() {
         </Link>
       </li>
       <li>
+        <Link href="/campaign-strategy" className={isActive("/campaign-strategy") ? activeLink : baseLink}>
+          Campaign Strategy
+          <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-200 ${
+            isActive("/campaign-strategy") ? 'w-full' : 'w-0 group-hover:w-full'
+          }`}></span>
+        </Link>
+      </li>
+      <li>
         <DropdownMenu>
           <DropdownMenuTrigger className="inline-flex items-center gap-2 text-sm font-medium text-foreground/70 hover:text-primary transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-md px-2 py-1">
             Features 

@@ -14,6 +14,7 @@ import insightsRoutes from "./routes/insightsRoutes.js";
 import timeSeriesRoutes from "./routes/timeSeriesRoutes.js";
 import topicIntelligenceRoutes from "./routes/topicIntelligenceRoutes.js";
 import marketInsightsRoutes from "./routes/marketInsightsRoutes.js";
+import campaignStrategyRoutes from "./routes/campaignStrategyRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -34,6 +35,7 @@ app.use('/api/v1/insights', insightsRoutes);
 app.use('/time-series', timeSeriesRoutes);
 app.use('/api/v1/topic-intelligence', topicIntelligenceRoutes);
 app.use('/api/v1/market-insights', marketInsightsRoutes);
+app.use('/api/v1/campaign-strategy', campaignStrategyRoutes);
 
 // Backward compatibility redirects to v1
 app.use('/api/finance-chart', (_req, res) => res.redirect(301, '/api/v1/finance-chart'));

@@ -102,3 +102,27 @@
     background: hsl(var(--primary));
   }
 }
+
+/* Fix select dropdown styling */
+select {
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+select option {
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Dark mode select styling */
+@media (prefers-color-scheme: dark) {
+  select {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+  
+  select option {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+}
