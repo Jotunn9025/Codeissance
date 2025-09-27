@@ -1,76 +1,76 @@
 @import "tailwindcss";
 
 :root {
-  /* Light theme */
+  /* Light theme – Royal Blue */
   --background: 0 0% 100%;
-  --foreground: 262 83% 14%; /* Deep purple for text */
+  --foreground: 215 80% 15%;        /* deep navy text */
   --card: 0 0% 100%;
-  --card-foreground: 262 83% 14%;
-  --popover: 0 0% 100% !important; /* ✅ solid white popover */
-  --popover-foreground: 262 83% 14% !important;
-  --primary: 262 83% 58%; /* Purple main */
+  --card-foreground: 215 80% 15%;
+  --popover: 0 0% 100% !important;
+  --popover-foreground: 215 80% 15% !important;
+  --primary: 215 90% 55%;           /* ⭐ main royal blue */
   --primary-foreground: 0 0% 100%;
-  --secondary: 260 40% 96%;
-  --secondary-foreground: 262 83% 14%;
-  --muted: 260 40% 96%;
-  --muted-foreground: 263 30% 40%;
-  --accent: 260 40% 96%;
-  --accent-foreground: 262 83% 14%;
+  --secondary: 215 40% 96%;
+  --secondary-foreground: 215 80% 15%;
+  --muted: 215 40% 96%;
+  --muted-foreground: 215 20% 40%;
+  --accent: 215 40% 96%;
+  --accent-foreground: 215 80% 15%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --border: 260 30% 90%;
-  --input: 260 30% 90%;
-  --ring: 262 83% 58%;
-  --chart-1: 270 70% 60%; /* purple variations */
-  --chart-2: 280 65% 55%;
-  --chart-3: 290 60% 50%;
-  --chart-4: 300 60% 55%;
-  --chart-5: 310 65% 60%;
+  --border: 215 30% 90%;
+  --input: 215 30% 90%;
+  --ring: 215 90% 55%;
+  --chart-1: 215 70% 55%;
+  --chart-2: 220 65% 50%;
+  --chart-3: 225 60% 45%;
+  --chart-4: 220 65% 55%;
+  --chart-5: 215 70% 60%;
   --radius: 0.5rem;
-  --sidebar: 260 40% 98%;
-  --sidebar-foreground: 262 83% 14%;
-  --sidebar-primary: 262 83% 58%;
+  --sidebar: 215 40% 98%;
+  --sidebar-foreground: 215 80% 15%;
+  --sidebar-primary: 215 90% 55%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 260 40% 96%;
-  --sidebar-accent-foreground: 262 83% 14%;
-  --sidebar-border: 260 30% 90%;
-  --sidebar-ring: 262 83% 58%;
+  --sidebar-accent: 215 40% 96%;
+  --sidebar-accent-foreground: 215 80% 15%;
+  --sidebar-border: 215 30% 90%;
+  --sidebar-ring: 215 90% 55%;
 }
 
 .dark {
-  /* Dark theme */
-  --background: 262 83% 10%; /* deep purple background */
+  /* Dark theme – Royal Blue */
+  --background: 215 80% 10%;
   --foreground: 0 0% 100%;
-  --card: 262 83% 12%;
+  --card: 215 80% 12%;
   --card-foreground: 0 0% 100%;
-  --popover: 262 83% 12% !important; /* ✅ solid dark purple popover */
+  --popover: 215 80% 12% !important;
   --popover-foreground: 0 0% 100% !important;
-  --primary: 265 89% 70%; /* bright neon purple */
-  --primary-foreground: 262 83% 14%;
-  --secondary: 270 40% 20%;
+  --primary: 215 90% 60%;           /* brighter for contrast */
+  --primary-foreground: 215 80% 15%;
+  --secondary: 215 40% 20%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 270 40% 20%;
-  --muted-foreground: 270 20% 70%;
-  --accent: 270 40% 20%;
+  --muted: 215 40% 20%;
+  --muted-foreground: 215 20% 70%;
+  --accent: 215 40% 20%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 62% 40%;
   --destructive-foreground: 0 0% 100%;
-  --border: 270 30% 25%;
-  --input: 270 30% 25%;
-  --ring: 265 89% 70%;
-  --chart-1: 270 70% 60%;
-  --chart-2: 280 65% 55%;
-  --chart-3: 290 60% 50%;
-  --chart-4: 300 60% 55%;
-  --chart-5: 310 65% 60%;
-  --sidebar: 262 83% 8%;
+  --border: 215 30% 25%;
+  --input: 215 30% 25%;
+  --ring: 215 90% 60%;
+  --chart-1: 215 70% 55%;
+  --chart-2: 220 65% 50%;
+  --chart-3: 225 60% 45%;
+  --chart-4: 220 65% 55%;
+  --chart-5: 215 70% 60%;
+  --sidebar: 215 80% 8%;
   --sidebar-foreground: 0 0% 100%;
-  --sidebar-primary: 265 89% 70%;
-  --sidebar-primary-foreground: 262 83% 14%;
-  --sidebar-accent: 270 30% 18%;
+  --sidebar-primary: 215 90% 60%;
+  --sidebar-primary-foreground: 215 80% 15%;
+  --sidebar-accent: 215 30% 18%;
   --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 270 30% 18%;
-  --sidebar-ring: 265 89% 70%;
+  --sidebar-border: 215 30% 18%;
+  --sidebar-ring: 215 90% 60%;
 }
 
 @layer base {
@@ -86,7 +86,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -103,24 +102,14 @@
   }
 }
 
-/* Fix select dropdown styling */
-select {
-  background-color: hsl(var(--background)) !important;
-  color: hsl(var(--foreground)) !important;
-}
-
+select,
 select option {
   background-color: hsl(var(--background)) !important;
   color: hsl(var(--foreground)) !important;
 }
 
-/* Dark mode select styling */
 @media (prefers-color-scheme: dark) {
-  select {
-    background-color: hsl(var(--background)) !important;
-    color: hsl(var(--foreground)) !important;
-  }
-  
+  select,
   select option {
     background-color: hsl(var(--background)) !important;
     color: hsl(var(--foreground)) !important;

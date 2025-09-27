@@ -29,8 +29,8 @@ function App() {
   const controls = useAnimation();
 
   const metrics = [
-    { value: "94.7%", label: "Accuracy Rate", trend: "up" },
-    { value: "2.3s", label: "Response Time", trend: "down" },
+    { value: "87.2%", label: "Accuracy Rate", trend: "up" },
+    { value: "7.3s", label: "Response Time", trend: "down" },
     { value: "15K+", label: "Data Sources", trend: "up" },
     { value: "$2.4M", label: "Saved Losses", trend: "up" }
   ];
@@ -149,13 +149,7 @@ function App() {
             className="mb-8"
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
-              <motion.div
-                animate={controls}
-                className="w-2 h-2 bg-primary rounded-full"
-              />
-              <span className="text-sm font-medium text-primary">LIVE AI MONITORING</span>
-            </div>
+            
             
             <h1 className="text-5xl md:text-7xl font-black mb-6 text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
               Dynamic Market
@@ -168,23 +162,7 @@ function App() {
               and turns them into proactive strategy with real-time market intelligence.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-              <motion.button
-                className="px-8 py-4 bg-primary text-primary-foreground rounded-lg font-semibold text-lg hover:bg-primary/90 transition-all duration-300 animate-pulse-glow"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Start Free Trial
-              </motion.button>
-              <motion.button
-                className="px-8 py-4 border border-border rounded-lg font-semibold text-lg hover:bg-secondary transition-all duration-300 flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Eye className="w-5 h-5" />
-                Watch Demo
-              </motion.button>
-            </div>
+
           </motion.div>
 
           {/* Metrics Display */}

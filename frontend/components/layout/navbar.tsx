@@ -19,8 +19,8 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
-  const baseLink = "text-sm font-medium transition-all duration-200 hover:text-primary text-foreground/70 hover:scale-105 relative group"
-  const activeLink = "text-sm font-medium text-primary relative group"
+  const baseLink = "text-base font-medium transition-all duration-200 hover:text-primary text-foreground/70 hover:scale-105 relative group"
+  const activeLink = "text-base font-medium text-primary relative group"
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href)
 
@@ -34,22 +34,15 @@ export default function Navbar() {
           }`}></span>
         </Link>
       </li>
-      <li>
-        <Link href="/market-insights" className={isActive("/market-insights") ? activeLink : baseLink}>
-          Market Insights
-          <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-200 ${
-            isActive("/market-insights") ? 'w-full' : 'w-0 group-hover:w-full'
-          }`}></span>
-        </Link>
-      </li>
-      <li>
+      
+      {/* <li>
         <Link href="/topic-intelligence" className={isActive("/topic-intelligence") ? activeLink : baseLink}>
           Topic Intelligence
           <span className={`absolute -bottom-1 left-0 h-0.5 bg-primary transition-all duration-200 ${
             isActive("/topic-intelligence") ? 'w-full' : 'w-0 group-hover:w-full'
           }`}></span>
         </Link>
-      </li>
+      </li> */}
       <li>
         <Link href="/what-if" className={isActive("/what-if") ? activeLink : baseLink}>
           What-If
@@ -76,7 +69,7 @@ export default function Navbar() {
       </li>
       <li>
         <DropdownMenu>
-          <DropdownMenuTrigger className="inline-flex items-center gap-2 text-sm font-medium text-foreground/70 hover:text-primary transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-md px-2 py-1">
+          <DropdownMenuTrigger className="inline-flex items-center gap-2 text-base font-medium text-foreground/70 hover:text-primary transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded-md px-3 py-2">
             Features 
             <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" aria-hidden="true" />
           </DropdownMenuTrigger>
@@ -118,20 +111,20 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 transition-all duration-200">
       <nav
-        className="mx-auto flex max-w-screen-2xl items-center justify-between px-4 py-4 md:px-8"
+        className="mx-auto flex max-w-screen-2xl items-center justify-between px-4 py-6 md:px-8"
         aria-label="Primary navigation"
       >
         {/* Left: Brand */}
         <div className="flex items-center gap-3">
           <Link 
             href="/" 
-            className="flex items-center gap-2 font-bold text-xl text-foreground hover:text-primary transition-all duration-200 hover:scale-105 group"
+            className="flex items-center gap-3 font-bold text-2xl text-foreground hover:text-primary transition-all duration-200 hover:scale-105 group"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center group-hover:shadow-lg group-hover:shadow-primary/25 transition-all duration-200">
-              <TrendingUp className="h-4 w-4 text-primary-foreground" />
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center group-hover:shadow-lg group-hover:shadow-primary/25 transition-all duration-200">
+              <TrendingUp className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-              Sentiment Oracle
+            <span className="text-white">
+              TradeStorm
             </span>
           </Link>
         </div>
@@ -142,11 +135,11 @@ export default function Navbar() {
         </div>
 
         {/* Right: Dashboard */}
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           <Button 
             asChild 
-            size="sm"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-lg hover:shadow-xl hover:shadow-primary/25 transition-all duration-200 hover:scale-105"
+            size="default"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-lg hover:shadow-xl hover:shadow-primary/25 transition-all duration-200 hover:scale-105 px-6 py-2"
           >
             <Link href="/dashboard">Dashboard</Link>
           </Button>
