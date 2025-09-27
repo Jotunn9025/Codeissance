@@ -812,4 +812,76 @@ export const forceRefreshEndpoint = async (req, res) => {
   return scrapeSources(req, res);
 };
 
+// Internal function to get scraping data (used by other controllers)
+export const getScrapingDataInternal = async () => {
+  // Check if we have valid cached data
+  if (isCacheValid(cache.timestamp, cache.ttl) && cache.data) {
+    console.log('Returning cached scraping data for internal use');
+    return cache.data;
+  }
+
+  console.log('Cache miss - fetching fresh data for internal use');
+  
+  try {
+    const [x, reddit, newsApi, perplexity] = await Promise.all([
+      scrapeX(),
+      scrapeReddit(),
+      scrapeNewsApi(),
+      scrapePerplexity(),
+    ]);
+  
+    // Combine all articles for analysis
+    const allArticles = [
+      ...(x || []).map(article => ({ ...article, source: 'x' })),
+      ...(reddit || []).map(article => ({ ...article, source: 'reddit' })),
+      ...(newsApi || []).map(article => ({ ...article, source: 'newsApi' })),
+      ...(perplexity || []).map(article => ({ ...article, source: 'perplexity' }))
+    ];
+    
+    // Analyze content with Groq Llama 3.3 70B
+    const groqAnalysis = await analyzeContentWithGroq(allArticles);
+    
+    // Count topic popularity using Groq analysis
+    const topicPopularity = countTopicPopularityFromGroq(groqAnalysis.allArticles);
+    
+    // Add Groq analysis to articles
+    const enhancedArticles = allArticles.map(article => {
+      const match = groqAnalysis.allArticles.find(item => item.title === article.title);
+      return {
+        ...article,
+        groqAnalysis: match || null
+      };
+    });
+    
+    const responseData = { 
+      type: "trending_content",
+      timestamp: new Date().toISOString(),
+      x, 
+      reddit, 
+      newsApi, 
+      perplexity,
+      topStories: groqAnalysis.topStories,
+      allArticlesAnalysis: groqAnalysis.allArticles,
+      fuzzyAnalysis: {
+        totalArticles: allArticles.length,
+        matchedArticles: groqAnalysis.allArticles.length,
+        topicPopularity,
+        topTopics: topicPopularity.slice(0, 10),
+        confidenceThreshold: 0.7
+      }
+    };
+
+    // Cache the complete response
+    cache.data = responseData;
+    cache.timestamp = Date.now();
+    console.log('Cached complete scraping response for internal use');
+
+    return responseData;
+  } catch (error) {
+    console.error('Error in getScrapingDataInternal:', error);
+    return null;
+  }
+};
+
+
 
