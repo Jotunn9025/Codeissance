@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_BASE_URL = process.env.PUBLIC_BACKEND_BASE_URL || 'http://localhost:3001';
+const BACKEND_BASE_URL = process.env.PUBLIC_BACKEND_BASE_URL || 'http://localhost:5000';
 
 export async function POST(request: NextRequest) {
   try {
-    const response = await fetch(`${BACKEND_BASE_URL}/api/sources/cache/refresh`, {
+    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/sources/cache/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

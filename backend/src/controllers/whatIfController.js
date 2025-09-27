@@ -244,66 +244,137 @@ export const analyzeWhatIf = async (req, res) => {
     // Add user message to memory
     messageMemory.addMessage(sessionId, 'user', userInput);
     
-    // Process with Python script
+    // Process with Python script (two-stage approach)
     let nlpResult;
     try {
       nlpResult = await processWithLangchain(userInput, sessionId);
     } catch (error) {
       console.log('⚠️ Python script failed, using fallback processing');
-      // Fallback: simple keyword matching
+      // Fallback: conversational response
       nlpResult = {
-        scenario_type: 'market_crash',
-        parameters: { crash_percent: 20 },
-        confidence: 0.6,
-        explanation: 'Fallback analysis based on keyword matching'
+        processing_type: 'conversational',
+        classification: { input_type: 'other', confidence: 0.3, reasoning: 'Fallback due to error' },
+        conversational_data: {
+          response_type: 'conversational',
+          message: 'I encountered an error processing your request. Please try asking about a specific scenario or rephrasing your question.',
+          suggestions: [
+            'What if Tesla stock crashes by 30%?',
+            'What if Apple launches a new iPhone?',
+            'What if the Fed raises interest rates by 2%?'
+          ],
+          references_previous_analysis: false
+        }
       };
     }
     
-    const { scenario_type, parameters, confidence, explanation } = nlpResult;
-    
-    // Validate scenario type
-    if (!SCENARIO_TYPES[scenario_type]) {
-      return res.status(400).json({
-        success: false,
-        error: `Invalid scenario type: ${scenario_type}`,
-        available_types: Object.keys(SCENARIO_TYPES)
-      });
-    }
-    
-    // Generate sentiment prediction
-    const sentimentPrediction = generateSentimentPrediction({
-      type: scenario_type,
-      ...parameters
-    });
-    
-    // Create response
-    const response = {
-      success: true,
-      scenario: {
-        type: scenario_type,
-        parameters: parameters,
-        description: SCENARIO_TYPES[scenario_type].description
-      },
-      prediction: {
-        sentiment: sentimentPrediction.sentiment,
-        confidence: sentimentPrediction.confidence,
-        magnitude: sentimentPrediction.magnitude,
-        direction: sentimentPrediction.direction,
-        explanation: explanation
-      },
-      metadata: {
-        session_id: sessionId,
-        timestamp: new Date().toISOString(),
-        processing_method: 'ai_enhanced'
+    // Handle different processing types
+    if (nlpResult.processing_type === 'scenario') {
+      // Handle scenario analysis
+      const { scenario_data } = nlpResult;
+      const { scenario_type, parameters, confidence, explanation } = scenario_data;
+      
+      // Validate scenario type
+      if (!SCENARIO_TYPES[scenario_type]) {
+        return res.status(400).json({
+          success: false,
+          error: `Invalid scenario type: ${scenario_type}`,
+          available_types: Object.keys(SCENARIO_TYPES)
+        });
       }
-    };
-    
-    // Add assistant response to memory
-    messageMemory.addMessage(sessionId, 'assistant', JSON.stringify(response));
-    
-    console.log(`✅ What-if analysis completed for ${scenario_type}`);
-    
-    res.json(response);
+      
+      // Generate sentiment prediction
+      const sentimentPrediction = generateSentimentPrediction({
+        type: scenario_type,
+        ...parameters
+      });
+      
+      // Create response
+      const response = {
+        success: true,
+        processing_type: 'scenario',
+        scenario: {
+          type: scenario_type,
+          parameters: parameters,
+          description: SCENARIO_TYPES[scenario_type].description
+        },
+        prediction: {
+          sentiment: sentimentPrediction.sentiment,
+          confidence: sentimentPrediction.confidence,
+          magnitude: sentimentPrediction.magnitude,
+          direction: sentimentPrediction.direction,
+          explanation: explanation
+        },
+        metadata: {
+          session_id: sessionId,
+          timestamp: new Date().toISOString(),
+          processing_method: 'ai_enhanced_two_stage'
+        }
+      };
+      
+      // Add assistant response to memory
+      messageMemory.addMessage(sessionId, 'assistant', JSON.stringify(response));
+      
+      console.log(`✅ What-if analysis completed for ${scenario_type}`);
+      
+      res.json(response);
+      
+    } else if (nlpResult.processing_type === 'conversational') {
+      // Handle conversational response
+      const { conversational_data } = nlpResult;
+      
+      // Create conversational response
+      const response = {
+        success: true,
+        processing_type: 'conversational',
+        message: conversational_data.message,
+        suggestions: conversational_data.suggestions || [],
+        references_previous_analysis: conversational_data.references_previous_analysis || false,
+        metadata: {
+          session_id: sessionId,
+          timestamp: new Date().toISOString(),
+          processing_method: 'ai_enhanced_conversational'
+        }
+      };
+      
+      // Add assistant response to memory
+      messageMemory.addMessage(sessionId, 'assistant', conversational_data.message);
+      
+      console.log(`✅ Conversational response generated`);
+      
+      res.json(response);
+      
+    } else {
+      // Handle error case
+      const fallbackResponse = nlpResult.fallback_response || {
+        response_type: 'conversational',
+        message: 'I encountered an error processing your request. Please try again.',
+        suggestions: [
+          'What if Tesla stock crashes by 30%?',
+          'What if Apple launches a new iPhone?'
+        ],
+        references_previous_analysis: false
+      };
+      
+      const response = {
+        success: true,
+        processing_type: 'conversational',
+        message: fallbackResponse.message,
+        suggestions: fallbackResponse.suggestions || [],
+        references_previous_analysis: fallbackResponse.references_previous_analysis || false,
+        metadata: {
+          session_id: sessionId,
+          timestamp: new Date().toISOString(),
+          processing_method: 'fallback'
+        }
+      };
+      
+      // Add assistant response to memory
+      messageMemory.addMessage(sessionId, 'assistant', fallbackResponse.message);
+      
+      console.log(`⚠️ Using fallback response`);
+      
+      res.json(response);
+    }
     
   } catch (error) {
     console.error('❌ What-if analysis error:', error);

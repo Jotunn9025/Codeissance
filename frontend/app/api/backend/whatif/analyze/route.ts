@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_BASE_URL = process.env.PUBLIC_BACKEND_BASE_URL || 'http://localhost:5000';
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/sources/cache/status`, {
-      method: 'GET',
+    const body = await request.json();
+    
+    const response = await fetch(`${BACKEND_BASE_URL}/api/v1/whatif/analyze`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
@@ -18,9 +21,9 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error('Error fetching cache status:', error);
+    console.error('Error analyzing what-if scenario:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch cache status' },
+      { error: 'Failed to analyze what-if scenario' },
       { status: 500 }
     );
   }

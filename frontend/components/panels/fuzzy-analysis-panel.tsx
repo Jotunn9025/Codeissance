@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BarChart3, PieChart, TrendingUp, Eye, EyeOff } from "lucide-react";
+import { BarChart3, PieChart, TrendingUp, Eye, EyeOff, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 
 interface TopicData {
@@ -30,6 +30,7 @@ interface FuzzyAnalysisPanelProps {
 export function FuzzyAnalysisPanel({ data, searchTerm, onTopicClick }: FuzzyAnalysisPanelProps) {
   const [showAllTopics, setShowAllTopics] = useState(false);
   const [confidenceThreshold, setConfidenceThreshold] = useState(data.confidenceThreshold);
+  const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
 
   const filteredTopics = data.topicPopularity.filter(topic => {
     const matchesSearch = !searchTerm || topic.topic.toLowerCase().includes(searchTerm.toLowerCase());
@@ -38,6 +39,16 @@ export function FuzzyAnalysisPanel({ data, searchTerm, onTopicClick }: FuzzyAnal
   });
 
   const displayedTopics = showAllTopics ? filteredTopics : filteredTopics.slice(0, 5);
+
+  const toggleTopicExpansion = (topic: string) => {
+    const newExpanded = new Set(expandedTopics);
+    if (newExpanded.has(topic)) {
+      newExpanded.delete(topic);
+    } else {
+      newExpanded.add(topic);
+    }
+    setExpandedTopics(newExpanded);
+  };
 
   const getConfidenceColor = (confidence: number) => {
     if (confidence >= 0.9) return "bg-green-100 text-green-800 border-green-200";
@@ -80,79 +91,85 @@ export function FuzzyAnalysisPanel({ data, searchTerm, onTopicClick }: FuzzyAnal
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {/* Bar Chart Visualization */}
+          {/* Merged Topics with Sample Data Dropdown */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <PieChart className="h-5 w-5" />
-              Top Topics by Count
+              Top Topics by Count with Sample Titles
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {displayedTopics.map((topic, index) => (
-                <div key={topic.topic} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium w-8">#{index + 1}</span>
-                      <span 
-                        className="text-sm font-medium truncate max-w-xs cursor-pointer hover:text-primary transition-colors" 
-                        title={topic.topic}
-                        onClick={() => onTopicClick?.(topic.topic)}
-                      >
-                        {topic.topic}
-                      </span>
-                      <Badge className={`text-xs ${getConfidenceColor(topic.avgConfidence)}`}>
-                        {getConfidenceLabel(topic.avgConfidence)}
-                      </Badge>
-                    </div>
-                    <div className="text-sm font-medium">
-                      {topic.count} articles
-                    </div>
-                  </div>
-                  
-                  {/* Progress Bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-primary h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(topic.count / maxCount) * 100}%` }}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Confidence: {(topic.avgConfidence * 100).toFixed(1)}%</span>
-                    <span>{topic.allTitles} total matches</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Sample Titles Table */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              Sample Titles by Topic
-            </h3>
-            <div className="space-y-3">
-              {displayedTopics.map((topic) => (
                 <div key={topic.topic} className="p-4 rounded-lg border bg-muted/30">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-medium text-sm">{topic.topic}</h4>
-                    <Badge variant="outline" className="text-xs">
-                      {topic.count} articles
-                    </Badge>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    {topic.sampleTitles.map((title, index) => (
-                      <div key={index} className="text-sm text-muted-foreground pl-2 border-l-2 border-primary/20">
-                        • {title}
+                  {/* Topic Header with Stats */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium w-8">#{index + 1}</span>
+                        <span 
+                          className="text-sm font-medium truncate max-w-xs cursor-pointer hover:text-primary transition-colors" 
+                          title={topic.topic}
+                          onClick={() => onTopicClick?.(topic.topic)}
+                        >
+                          {topic.topic}
+                        </span>
+                        <Badge className={`text-xs ${getConfidenceColor(topic.avgConfidence)}`}>
+                          {getConfidenceLabel(topic.avgConfidence)}
+                        </Badge>
                       </div>
-                    ))}
-                    {topic.allTitles > topic.sampleTitles.length && (
-                      <div className="text-xs text-muted-foreground pl-2">
-                        +{topic.allTitles - topic.sampleTitles.length} more articles
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm font-medium">
+                          {topic.count} articles
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleTopicExpansion(topic.topic)}
+                          className="flex items-center gap-1 h-6 px-2"
+                        >
+                          {expandedTopics.has(topic.topic) ? (
+                            <ChevronUp className="h-3 w-3" />
+                          ) : (
+                            <ChevronDown className="h-3 w-3" />
+                          )}
+                          <span className="text-xs">
+                            {expandedTopics.has(topic.topic) ? 'Hide' : 'Show'} Samples
+                          </span>
+                        </Button>
                       </div>
-                    )}
+                    </div>
+                    
+                    {/* Progress Bar */}
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-primary h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${(topic.count / maxCount) * 100}%` }}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>Confidence: {(topic.avgConfidence * 100).toFixed(1)}%</span>
+                      <span>{topic.allTitles} total matches</span>
+                    </div>
                   </div>
+
+                  {/* Expandable Sample Titles */}
+                  {expandedTopics.has(topic.topic) && (
+                    <div className="mt-4 pt-4 border-t border-muted">
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium text-muted-foreground mb-2">Sample Titles:</h4>
+                        {topic.sampleTitles.map((title, titleIndex) => (
+                          <div key={titleIndex} className="text-sm text-muted-foreground pl-2 border-l-2 border-primary/20">
+                            • {title}
+                          </div>
+                        ))}
+                        {topic.allTitles > topic.sampleTitles.length && (
+                          <div className="text-xs text-muted-foreground pl-2">
+                            +{topic.allTitles - topic.sampleTitles.length} more articles
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

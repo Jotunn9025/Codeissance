@@ -95,7 +95,7 @@ async function scrapeReddit() {
         if (seenTitles.has(title) || seenUrls.has(url)) continue;
         
         // Increase limit to 100 articles
-        if (articles.length >= 50) break;
+        if (articles.length >= 30) break;
         
         seenTitles.add(title);
         seenUrls.add(url);
@@ -419,7 +419,7 @@ ${titles.map((title, i) => `${i+1}. ${title}`).join('\n')}`;
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
       {
-        model: "llama-3.3-70b-versatile",
+        model: "groq/compound-mini",
         messages: [
           {
             role: "system",

@@ -115,7 +115,8 @@ export default function DashboardPage() {
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <div className="mb-6">
+      {/* Centered Title and Description */}
+      <div className="mb-6 text-center">
         <h1 className="text-3xl font-bold tracking-tight">Trending Content Dashboard</h1>
         <p className="text-muted-foreground">Real-time social media, news, and search trend analysis with AI-powered insights.</p>
       </div>
@@ -184,7 +185,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Summary Panel and Cache Status */}
+      {/* Summary Panel and Cache Status - Full Row */}
       <div className="mb-8 grid gap-6 md:grid-cols-3">
         {data && (
           <div className="md:col-span-2">
@@ -196,6 +197,28 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Fuzzy Analysis Panel - Full Width */}
+      {data && (
+        <div className="mb-8 space-y-6">
+          <FuzzyAnalysisPanel 
+            data={data.fuzzyAnalysis} 
+            searchTerm={searchTerm}
+            onTopicClick={setSelectedTopic}
+          />
+        </div>
+      )}
+
+      {/* Topic Cloud Panel - Full Width */}
+      {data && (
+        <div className="mb-8">
+          <WordCloudPanel 
+            data={data.fuzzyAnalysis.topicPopularity} 
+            searchTerm={searchTerm}
+            onTopicClick={setSelectedTopic}
+          />
+        </div>
+      )}
+
       {/* Top Story Widget */}
       {data && data.topStories && (
         <div className="mb-8">
@@ -203,7 +226,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Main Content Grid */}
+      {/* Trending Content - Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Left Column */}
         <div className="space-y-6">
@@ -247,24 +270,6 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
-
-      {/* Fuzzy Analysis Panel - Full Width */}
-      {data && (
-        <div className="mt-8 space-y-6">
-          <FuzzyAnalysisPanel 
-            data={data.fuzzyAnalysis} 
-            searchTerm={searchTerm}
-            onTopicClick={setSelectedTopic}
-          />
-          
-          {/* Word Cloud Panel */}
-          <WordCloudPanel 
-            data={data.fuzzyAnalysis.topicPopularity} 
-            searchTerm={searchTerm}
-            onTopicClick={setSelectedTopic}
-          />
-        </div>
-      )}
 
       {/* Loading State */}
       {loading && !data && (
