@@ -2,9 +2,45 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bell, AlertTriangle, TrendingUp, TrendingDown, Settings, Filter } from "lucide-react";
+import { Bell, AlertTriangle, TrendingUp, TrendingDown, Settings, Filter, Phone, MessageSquare, Mail } from "lucide-react";
+import { useState } from "react";
 
 export default function AlertsPage() {
+  const [isLoading, setIsLoading] = useState<{ [key: string]: boolean }>({});
+
+  // Call Agent API endpoints
+  const CALL_AGENT_BASE_URL = process.env.NEXT_PUBLIC_CALL_AGENT_URL || 'http://localhost:3001';
+
+  const handleCall = async () => {
+    setIsLoading(prev => ({ ...prev, call: true }));
+    
+    // Mock delay to simulate API call
+    setTimeout(() => {
+      alert('Call Initiated! 📞');
+      setIsLoading(prev => ({ ...prev, call: false }));
+    }, 1000);
+  };
+
+  const handleWhatsApp = async () => {
+    setIsLoading(prev => ({ ...prev, whatsapp: true }));
+    
+    // Mock delay to simulate API call
+    setTimeout(() => {
+      alert('WhatsApp Message Initiated! 💬');
+      setIsLoading(prev => ({ ...prev, whatsapp: false }));
+    }, 1000);
+  };
+
+  const handleSMS = async () => {
+    setIsLoading(prev => ({ ...prev, sms: true }));
+    
+    // Mock delay to simulate API call
+    setTimeout(() => {
+      alert('SMS Initiated! 📱');
+      setIsLoading(prev => ({ ...prev, sms: false }));
+    }, 1000);
+  };
+
   const alerts = [
     {
       id: 1,
@@ -117,6 +153,48 @@ export default function AlertsPage() {
                 <Bell className="h-3 w-3" />
                 {alerts.length} Active Alerts
               </Badge>
+            </div>
+          </div>
+
+          {/* Communication Actions */}
+          <div className="bg-muted/30 rounded-lg p-6">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Phone className="h-5 w-5" />
+              Send Market Alert Notifications
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Trigger immediate notifications via call, WhatsApp, or SMS to stay informed about market sentiment changes.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Button 
+                onClick={handleCall}
+                disabled={isLoading.call}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+              >
+                <Phone className="h-4 w-4" />
+                {isLoading.call ? 'Initiating...' : 'Make Call'}
+              </Button>
+              <Button 
+                onClick={handleWhatsApp}
+                disabled={isLoading.whatsapp}
+                className="flex items-center gap-2 bg-green-500 hover:bg-green-600"
+              >
+                <MessageSquare className="h-4 w-4" />
+                {isLoading.whatsapp ? 'Initiating...' : 'Send WhatsApp'}
+              </Button>
+              <Button 
+                onClick={handleSMS}
+                disabled={isLoading.sms}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+              >
+                <Mail className="h-4 w-4" />
+                {isLoading.sms ? 'Initiating...' : 'Send SMS'}
+              </Button>
+            </div>
+            <div className="mt-3 text-xs text-muted-foreground">
+              <p>• <strong>Call:</strong> Voice-based market sentiment analysis with AI assistant</p>
+              <p>• <strong>WhatsApp:</strong> Instant market alerts and trend notifications</p>
+              <p>• <strong>SMS:</strong> Quick text-based market sentiment updates</p>
             </div>
           </div>
 
